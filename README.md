@@ -11,7 +11,7 @@ I know Ruby, and I know Rails. I previously served as CTO (and sole developer) f
 
 What I’m seeing with modern LLMs is genuinely transformative. While these tools accelerate development dramatically, I understand the code being produced here and can speak to its structure, decisions, and tradeoffs. I could have expanded this project further, but chose to keep the scope focused, adding only a few additional refinements.
 
-I love Ruby and love Rails. I have been doing them since 2005!
+I love Ruby and love Rails. I have been doing them since 2005! Hustling for contract work is tough, i'd rather work for a great company like yours. Marli and Bryce seem really great and I would love to work for you guys. I get stuff done and can take the lead when needed but also know how to listen and get my job done!
 
 Thanks for taking the time to review this.
 Back to the assignment.
