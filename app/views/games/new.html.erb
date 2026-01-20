@@ -1,0 +1,41 @@
+<div class="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-emerald-900 flex items-center justify-center p-4">
+  <div class="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 max-w-md w-full border border-white/20">
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-white mb-2">♠ Blackjack ♥</h1>
+      <p class="text-emerald-200">Test your luck against the dealer</p>
+    </div>
+
+    <%= form_with url: games_path, method: :post, class: "space-y-6" do |f| %>
+      <div>
+        <label for="player_name" class="block text-sm font-medium text-emerald-200 mb-2">
+          Your Name
+        </label>
+        <input 
+          type="text" 
+          name="player_name" 
+          id="player_name"
+          placeholder="Enter your name"
+          value="Player"
+          class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent"
+        >
+      </div>
+
+      <button 
+        type="submit"
+        class="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-bold rounded-lg shadow-lg transform transition hover:scale-105 focus:outline-none focus:ring-2 focus:ring-amber-400"
+      >
+        Start New Game
+      </button>
+    <% end %>
+
+    <div class="mt-8 pt-6 border-t border-white/20">
+      <h3 class="text-emerald-200 font-medium mb-3">Game Features:</h3>
+      <ul class="text-sm text-emerald-300 space-y-2">
+        <li>✓ Up to 6 players at the table</li>
+        <li>✓ Add computer players (3 skill levels)</li>
+        <li>✓ 6-deck shoe with realistic shuffling</li>
+        <li>✓ Card counting dashboard to learn Hi-Lo</li>
+      </ul>
+    </div>
+  </div>
+</div>

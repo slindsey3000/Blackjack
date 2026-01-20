@@ -1,0 +1,87 @@
+<%# Player hand partial %>
+<%# locals: player (Player object), game (Game object) %>
+
+<% is_current = game.playing? && game.current_player_position == player.position %>
+<% is_human = player.human? %>
+
+<div class="bg-white/10 rounded-xl p-4 border-2 <%= is_current ? 'border-yellow-400 shadow-lg shadow-yellow-400/20' : 'border-white/20' %> transition-all">
+  <!-- Player Header -->
+  <div class="flex justify-between items-center mb-3">
+    <div>
+      <span class="text-white font-bold"><%= player.name %></span>
+      <% if is_human %>
+        <span class="ml-2 text-xs bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded">YOU</span>
+      <% elsif player.is_computer? %>
+        <span class="ml-2 text-xs bg-blue-500/30 text-blue-300 px-2 py-0.5 rounded">CPU</span>
+      <% end %>
+    </div>
+    
+    <% if game.waiting? && player.is_computer? %>
+      <%= button_to "✕", remove_player_game_path(game, player_id: player.id), method: :post, class: "text-red-400 hover:text-red-300 text-sm", data: { turbo_confirm: "Remove this player?" } %>
+    <% end %>
+  </div>
+
+  <!-- Cards -->
+  <div class="flex flex-wrap gap-1 justify-center mb-3 min-h-[100px] items-center">
+    <% if player.hand.cards.any? %>
+      <% player.hand.cards.each do |card| %>
+        <%= render partial: "card", locals: { card: card, face_down: false } %>
+      <% end %>
+    <% else %>
+      <div class="text-white/30 text-sm">No cards</div>
+    <% end %>
+  </div>
+
+  <!-- Hand Value and Status -->
+  <div class="text-center">
+    <% if player.hand.cards.any? %>
+      <div class="text-white font-bold text-lg">
+        <%= player.hand_value %>
+        <% if player.soft_hand? %>
+          <span class="text-xs text-emerald-300 ml-1">(soft)</span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Status Badge -->
+    <% if player.status != "waiting" && player.status != "playing" %>
+      <div class="mt-2">
+        <% case player.status %>
+        <% when "busted" %>
+          <span class="px-3 py-1 bg-red-500/30 text-red-300 rounded-full text-sm font-bold">BUST!</span>
+        <% when "blackjack" %>
+          <span class="px-3 py-1 bg-yellow-500/30 text-yellow-300 rounded-full text-sm font-bold">BLACKJACK!</span>
+        <% when "stood" %>
+          <span class="px-3 py-1 bg-blue-500/30 text-blue-300 rounded-full text-sm">Stand</span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Result Badge (after game finishes) -->
+    <% if game.finished? && player.result %>
+      <div class="mt-2">
+        <% case player.result %>
+        <% when "win" %>
+          <span class="px-3 py-1 bg-green-500 text-white rounded-full text-sm font-bold">WIN!</span>
+        <% when "blackjack_win" %>
+          <span class="px-3 py-1 bg-yellow-500 text-black rounded-full text-sm font-bold">BLACKJACK PAYS 3:2!</span>
+        <% when "lose" %>
+          <span class="px-3 py-1 bg-red-500/50 text-red-200 rounded-full text-sm font-bold">LOSE</span>
+        <% when "push" %>
+          <span class="px-3 py-1 bg-gray-500/50 text-gray-200 rounded-full text-sm font-bold">PUSH</span>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Turn Indicator -->
+    <% if is_current %>
+      <div class="mt-2 text-yellow-400 text-sm animate-pulse">
+        <% if is_human %>
+          ▶ Your turn!
+        <% else %>
+          ▶ Thinking...
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

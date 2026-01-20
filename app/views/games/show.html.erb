@@ -1,0 +1,137 @@
+<div class="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-emerald-900 p-4">
+  <!-- Flash Messages -->
+  <% if flash[:alert] %>
+    <div class="max-w-4xl mx-auto mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+  <% if flash[:notice] %>
+    <div class="max-w-4xl mx-auto mb-4 p-4 bg-emerald-500/20 border border-emerald-500/50 rounded-lg text-emerald-200">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+
+  <!-- Header -->
+  <div class="max-w-6xl mx-auto mb-6">
+    <div class="flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-white">♠ Blackjack ♥</h1>
+      <div class="flex gap-3">
+        <%= link_to dashboard_path(@game), class: "px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm transition" do %>
+          📊 Card Counter
+        <% end %>
+        <%= link_to "New Game", new_game_path, class: "px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg text-sm transition" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Table -->
+  <div class="max-w-6xl mx-auto">
+    <div class="bg-green-700/50 backdrop-blur rounded-3xl shadow-2xl border-8 border-amber-900/80 p-6 min-h-[600px]">
+      
+      <!-- Dealer Section -->
+      <div class="mb-8">
+        <div class="text-center mb-4">
+          <span class="text-amber-200 font-bold text-lg">DEALER</span>
+          <% if @game.dealer %>
+            <% dealer = @game.dealer %>
+            <div class="mt-4 flex justify-center gap-2">
+              <% if dealer.hand.cards.any? %>
+                <% dealer.hand.cards.each_with_index do |card, index| %>
+                  <% # Show hole card face down unless game is finished or dealer's turn %>
+                  <% show_card = index == 0 || @game.finished? || @game.dealer_turn? %>
+                  <%= render partial: "card", locals: { card: card, face_down: !show_card } %>
+                <% end %>
+              <% else %>
+                <div class="w-20 h-28 border-2 border-dashed border-white/30 rounded-lg"></div>
+              <% end %>
+            </div>
+            <% if @game.finished? || @game.dealer_turn? %>
+              <div class="mt-2 text-white font-bold">
+                <%= dealer.hand_value %>
+                <% if dealer.busted? %>
+                  <span class="text-red-400 ml-2">BUST!</span>
+                <% elsif dealer.blackjack? %>
+                  <span class="text-yellow-400 ml-2">BLACKJACK!</span>
+                <% end %>
+              </div>
+            <% elsif dealer.hand.cards.any? %>
+              <div class="mt-2 text-white/70">
+                Showing: <%= dealer.up_card&.value %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Status Message -->
+      <div class="text-center mb-6">
+        <% if @game.waiting? %>
+          <div class="text-xl text-amber-200 font-bold">
+            Ready to deal - Add players or start the round
+          </div>
+        <% elsif @game.playing? %>
+          <% current = @game.current_player %>
+          <% if current&.human? %>
+            <div class="text-xl text-yellow-400 font-bold animate-pulse">
+              Your turn! Hit or Stand?
+            </div>
+          <% elsif current %>
+            <div class="text-xl text-emerald-300">
+              <%= current.name %>'s turn...
+            </div>
+          <% end %>
+        <% elsif @game.dealer_turn? %>
+          <div class="text-xl text-emerald-300">
+            Dealer is playing...
+          </div>
+        <% elsif @game.finished? %>
+          <div class="text-xl text-amber-200 font-bold">
+            Round complete!
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Players Section -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <% @game.active_players.each do |player| %>
+          <%= render partial: "player_hand", locals: { player: player, game: @game } %>
+        <% end %>
+
+        <!-- Add Player Slot -->
+        <% if @game.can_add_player? %>
+          <div class="bg-white/5 rounded-xl p-4 border-2 border-dashed border-white/20 flex flex-col items-center justify-center min-h-[200px]">
+            <div class="text-white/50 mb-4">Empty Seat</div>
+            <%= form_with url: add_player_game_path(@game), method: :post, class: "w-full max-w-xs" do %>
+              <select name="skill_level" class="w-full mb-3 px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm">
+                <option value="0">Low Skill CPU</option>
+                <option value="1" selected>Medium Skill CPU</option>
+                <option value="2">High Skill CPU</option>
+              </select>
+              <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition">
+                + Add Computer Player
+              </button>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-center gap-4">
+        <% if @game.waiting? %>
+          <%= button_to "Deal Cards", deal_game_path(@game), method: :post, class: "px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-bold rounded-xl shadow-lg text-xl transition transform hover:scale-105" %>
+        <% elsif @game.playing? && @game.current_player&.human? %>
+          <%= button_to "HIT", hit_game_path(@game), method: :post, class: "px-12 py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg text-xl transition transform hover:scale-105" %>
+          <%= button_to "STAND", stand_game_path(@game), method: :post, class: "px-12 py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-400 hover:to-red-500 text-white font-bold rounded-xl shadow-lg text-xl transition transform hover:scale-105" %>
+        <% elsif @game.finished? %>
+          <%= button_to "New Round", new_round_game_path(@game), method: :post, class: "px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-bold rounded-xl shadow-lg text-xl transition transform hover:scale-105" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Info Footer -->
+  <div class="max-w-6xl mx-auto mt-4 flex justify-between text-sm text-emerald-300/70">
+    <div>Cards remaining: <%= @game.shoe_cards&.size || 0 %> / <%= 6 * 52 %></div>
+    <div>Running count: <%= @counting_service.running_count %></div>
+  </div>
+</div>

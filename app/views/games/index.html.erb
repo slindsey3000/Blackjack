@@ -1,0 +1,32 @@
+<div class="min-h-screen bg-gradient-to-br from-emerald-900 via-green-800 to-emerald-900 p-4">
+  <div class="max-w-4xl mx-auto">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-white">♠ Active Games ♥</h1>
+      <%= link_to "New Game", new_game_path, class: "px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-lg transition" %>
+    </div>
+
+    <% if @games.any? %>
+      <div class="space-y-4">
+        <% @games.each do |game| %>
+          <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="text-white font-bold text-lg">Game #<%= game.id %></h3>
+                <p class="text-emerald-300 text-sm">
+                  Status: <%= game.status.humanize %> •
+                  Players: <%= game.active_players.count %>/<%= Game::MAX_PLAYERS %>
+                </p>
+              </div>
+              <%= link_to "Join", game_path(game), class: "px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="text-center py-16 text-emerald-300">
+        <p class="text-xl mb-4">No active games</p>
+        <%= link_to "Start a New Game", new_game_path, class: "px-8 py-4 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-lg inline-block transition" %>
+      </div>
+    <% end %>
+  </div>
+</div>

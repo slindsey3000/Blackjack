@@ -1,0 +1,167 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
+  <!-- Header -->
+  <div class="max-w-6xl mx-auto mb-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-white">📊 Card Counting Dashboard</h1>
+        <p class="text-purple-300 text-sm">Learn the Hi-Lo counting strategy</p>
+      </div>
+      <%= link_to "← Back to Game", game_path(@game), class: "px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-sm transition" %>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Main Counts Panel -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Count Display -->
+      <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+        <h2 class="text-lg font-bold text-white mb-4">Current Count</h2>
+        <div class="grid grid-cols-2 gap-6">
+          <div class="text-center">
+            <div class="text-5xl font-bold <%= @running_count >= 0 ? 'text-green-400' : 'text-red-400' %>">
+              <%= @running_count >= 0 ? "+#{@running_count}" : @running_count %>
+            </div>
+            <div class="text-purple-300 mt-2">Running Count</div>
+          </div>
+          <div class="text-center">
+            <div class="text-5xl font-bold <%= @true_count >= 0 ? 'text-green-400' : 'text-red-400' %>">
+              <%= @true_count >= 0 ? "+#{@true_count}" : @true_count %>
+            </div>
+            <div class="text-purple-300 mt-2">True Count</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Count Advice -->
+      <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+        <h2 class="text-lg font-bold text-white mb-4">What This Means</h2>
+        <div class="flex items-start gap-4">
+          <div class="text-4xl">
+            <% case @count_advice[:advantage] %>
+            <% when :player %>
+              🎯
+            <% when :house %>
+              ⚠️
+            <% else %>
+              ⚖️
+            <% end %>
+          </div>
+          <div>
+            <p class="text-white font-medium"><%= @count_advice[:message] %></p>
+            <p class="text-purple-300 text-sm mt-1"><%= @count_advice[:bet_advice] %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strategy Advice (if in game) -->
+      <% if @strategy_advice %>
+        <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+          <h2 class="text-lg font-bold text-white mb-4">Basic Strategy Advice</h2>
+          <div class="flex items-start gap-4">
+            <div class="text-4xl">
+              <% if @strategy_advice[:action] == "Hit" %>
+                👆
+              <% elsif @strategy_advice[:action] == "Stand" %>
+                ✋
+              <% else %>
+                💰
+              <% end %>
+            </div>
+            <div>
+              <div class="text-2xl font-bold text-amber-400"><%= @strategy_advice[:action] %></div>
+              <p class="text-white mt-1">
+                Your hand: <%= @strategy_advice[:player_total] %><%= @strategy_advice[:is_soft] ? " (soft)" : "" %>
+                vs Dealer's <%= @strategy_advice[:dealer_shows] %>
+              </p>
+              <p class="text-purple-300 text-sm mt-2"><%= @strategy_advice[:reason] %></p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Recent Cards -->
+      <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+        <h2 class="text-lg font-bold text-white mb-4">Recently Revealed Cards</h2>
+        <% if @recent_cards.any? %>
+          <div class="flex flex-wrap gap-2">
+            <% @recent_cards.reverse.each do |card| %>
+              <div class="px-3 py-2 rounded-lg text-lg font-bold 
+                <%= card.color == 'red' ? 'bg-red-500/20 text-red-300' : 'bg-gray-500/20 text-gray-300' %>">
+                <%= card.to_s %>
+                <span class="text-xs ml-1 opacity-60">
+                  (<%= card.counting_value > 0 ? "+#{card.counting_value}" : card.counting_value %>)
+                </span>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <p class="text-purple-300">No cards revealed yet</p>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="space-y-6">
+      <!-- Deck Info -->
+      <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+        <h2 class="text-lg font-bold text-white mb-4">Shoe Status</h2>
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between text-sm text-purple-300 mb-1">
+              <span>Cards Remaining</span>
+              <span><%= @cards_remaining %> / <%= 6 * 52 %></span>
+            </div>
+            <div class="w-full bg-white/10 rounded-full h-3">
+              <div class="bg-purple-500 h-3 rounded-full" style="width: <%= (@cards_remaining.to_f / (6 * 52) * 100).round %>%"></div>
+            </div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-white"><%= @decks_remaining %></div>
+            <div class="text-purple-300 text-sm">Decks Remaining</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hi-Lo Explanation -->
+      <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+        <h2 class="text-lg font-bold text-white mb-4">Hi-Lo System</h2>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between items-center">
+            <span class="text-white">2, 3, 4, 5, 6</span>
+            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded font-bold">+1</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-white">7, 8, 9</span>
+            <span class="px-2 py-1 bg-gray-500/20 text-gray-400 rounded font-bold">0</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-white">10, J, Q, K, A</span>
+            <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded font-bold">-1</span>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-white/10">
+          <p class="text-purple-300 text-xs">
+            <strong>True Count</strong> = Running Count ÷ Decks Remaining
+          </p>
+          <p class="text-purple-300 text-xs mt-2">
+            A positive count means more high cards remain, favoring the player. 
+            A negative count means more low cards remain, favoring the house.
+          </p>
+        </div>
+      </div>
+
+      <!-- Cards Seen Breakdown -->
+      <div class="bg-white/10 backdrop-blur rounded-xl p-6 border border-white/20">
+        <h2 class="text-lg font-bold text-white mb-4">Cards Seen</h2>
+        <div class="grid grid-cols-4 gap-2 text-center text-sm">
+          <% Card::RANKS.each do |rank| %>
+            <div class="bg-white/5 rounded p-2">
+              <div class="text-white font-bold"><%= rank %></div>
+              <div class="text-purple-300 text-xs"><%= @cards_breakdown[rank] || 0 %></div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
