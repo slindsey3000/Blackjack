@@ -2,7 +2,7 @@
 
 A full-featured Blackjack game implemented as a Ruby on Rails web application. Play against the dealer with up to 6 players at the table, including simulated computer players with varying skill levels.
 
-##To the devs:
+**To the devs:**
 This project was developed using Claude Opus 4.5. I’ve been leveraging Cursor with Claude models since May 2025. I’ve also used Codex, Grok, and Gemini, but I find the Claude models superior overall, and Opus 4.5 in particular represents a major leap forward.
 
 I’m currently completing a contracted project for USA Foosball building both a web application and a mobile app (iOS and Android). This is a project that traditionally would have taken close to two years; I will have it live in the app stores with under three months of development time.
