@@ -1,6 +1,22 @@
 # Blackjack Rails Application
 
-A full-featured Blackjack game implemented as a Ruby on Rails web application. Play against the dealer with up to 6 players at the table, including AI-controlled computer players with varying skill levels.
+A full-featured Blackjack game implemented as a Ruby on Rails web application. Play against the dealer with up to 6 players at the table, including simulated computer players with varying skill levels.
+
+##To the devs:
+This project was developed using Claude Opus 4.5. I’ve been leveraging Cursor with Claude models since May 2025. I’ve also used Codex, Grok, and Gemini, but I find the Claude models superior overall, and Opus 4.5 in particular represents a major leap forward.
+
+I’m currently completing a contracted project for USA Foosball building both a web application and a mobile app (iOS and Android). This is a project that traditionally would have taken close to two years; I will have it live in the app stores with under three months of development time.
+
+I know Ruby, and I know Rails. I previously served as CTO (and sole developer) for a startup where I built the core application from the ground up and helped raise a meaningful amount of capital. I truly coded the large (social network, fully working sportsbook) Rails API entirely myself end-to-end and led the front end React Native team.
+
+What I’m seeing with modern LLMs is genuinely transformative. While these tools accelerate development dramatically, I understand the code being produced here and can speak to its structure, decisions, and tradeoffs. I could have expanded this project further, but chose to keep the scope focused, adding only a few additional refinements.
+
+I love Ruby and love Rails. I have been doing them since 2005!
+
+Thanks for taking the time to review this.
+Back to the assignment.
+
+— Shawn
 
 ## Features
 
