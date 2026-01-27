@@ -164,10 +164,21 @@ class BlackjackService
     # Check if shoe needs reshuffling
     if game.shoe.needs_reshuffle?
       game.shoe.reshuffle!
-      game.update!(revealed_cards: [])
     end
 
-    game.update!(status: "waiting")
+    # Clear all hands and reset player statuses
+    game.players.each do |player|
+      player.clear_hand!
+      player.update!(status: "waiting", result: nil)
+    end
+
+    # Reset game state for new round
+    game.update!(
+      status: "waiting",
+      revealed_cards: [],
+      current_player_position: 0
+    )
+
     game.save_shoe!
 
     { success: true }
